@@ -1,7 +1,9 @@
 // app/actions.ts
 'use server'
 
+import { revalidatePath } from 'next/cache'
 import { User, userSchema } from './schemas'
+
 
 const users: User[] = [
     { id: '1', name: 'John Doe', phoneNumber: '123-456-7890', email: 'john@example.com' },
@@ -23,5 +25,17 @@ export async function addUser(data: Omit<User, 'id'>): Promise<User> {
   const newUser = { ...data, id: newId }
   const validatedUser = userSchema.parse(newUser)
   users.push(validatedUser)
+  return validatedUser
+}
+
+export async function editUser(id: string, data: Partial<Omit<User, 'id'>>): Promise<User> {
+//   const users = await getUsers() // Load current users
+  const userIndex = users.findIndex(user => user.id === id)
+  if (userIndex === -1) throw new Error('User not found')
+  const updatedUser = { ...users[userIndex], ...data }
+  const validatedUser = userSchema.parse(updatedUser)
+  users[userIndex] = validatedUser
+  revalidatePath('/')
+  console.log('User edited:', updatedUser)
   return validatedUser
 }

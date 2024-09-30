@@ -2,8 +2,8 @@
 'use client'
 
 import { useState } from 'react'
-//import AsyncSelect from 'react-select/async'
-import CustomAsyncSelect from './custom-asyncselect'
+import AsyncSelect from 'react-select/async'
+//import CustomAsyncSelect from './custom-asyncselect'
 import { searchUsers } from '@/app/actions/actions'
 import { UserCard } from './user-card'
 import { User } from '@/app/actions/schemas'
@@ -29,12 +29,12 @@ export default function UserSearch() {
 
   return (
     <div className="space-y-6">
-      <CustomAsyncSelect
-        searchAction={loadOptions}
-        addAction={handleChange}
-        placeholder="Search for a user..."
-        isClearable
-      />
+    <AsyncSelect
+      cacheOptions
+      loadOptions={loadOptions}
+      defaultOptions
+      onChange={handleChange}
+    />
       {selectedUser && <UserCard user={selectedUser} />}
     </div>
   )

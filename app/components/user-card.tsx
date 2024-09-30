@@ -1,7 +1,11 @@
+// app/components/user-card.tsx
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
-import { Phone, Mail, MapPin } from 'lucide-react'
+import { Phone, Mail, MapPin, User } from 'lucide-react'
+import { UserEditDialog } from './user-edit-dialog'
+
+const EditDialog = UserEditDialog
 
 interface User {
   id: string
@@ -45,6 +49,9 @@ export function UserCard({ user }: UserCardProps) {
             <span>{user.location}</span>
           </div>
         )}
+        <EditDialog user={user} onUpdateUser={function (updatedUser: User): void {
+          throw new Error('Function not implemented.')
+        } } />
       </CardContent>
     </Card>
   )

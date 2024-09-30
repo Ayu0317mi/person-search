@@ -21,7 +21,9 @@ export default function Home() {
       <Suspense fallback={<div>Loading...</div>}>
         <UserSearch />
       </Suspense> 
+      <div className='mt-2'>
       <UserDialog />
+      </div>
       <TechnicalOverview />
     </div>
   )

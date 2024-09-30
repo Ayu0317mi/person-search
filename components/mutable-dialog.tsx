@@ -1,3 +1,4 @@
+//mutable-dialog.tsx
 'use client';
 
 import React from 'react';
@@ -31,6 +32,7 @@ interface GenericDialogProps<T extends FieldValues> {
   dialogDescription?: string;
   submitButtonLabel?: string;
   defaultValues?: DefaultValues<T>; // If present, this will indicate edit mode
+  onSuccess?: (data: T) => void;
 }
 
 export default function MutableDialog<T extends FieldValues>({
@@ -43,6 +45,7 @@ export default function MutableDialog<T extends FieldValues>({
   editDialogTitle = 'Edit',
   dialogDescription = defaultValues ? 'Make changes to your item here. Click save when you\'re done.' : 'Fill out the form below to add a new item.',
   submitButtonLabel = defaultValues ? 'Save' : 'Add',
+  onSuccess,
 }: GenericDialogProps<T>) {
   const [open, setOpen] = useState(false);
 
@@ -80,15 +83,17 @@ export default function MutableDialog<T extends FieldValues>({
     console.log('actions:', actions);
 
     if (actions.success) {
-      const toastMessage = actions.message;
-      toast.success(toastMessage);
+      toast.success(actions.message);
+
+      if (onSuccess) {
+        onSuccess(actions.data!);  // Call onSuccess with the returned data
+      }
     } else {
-      const toastMessage = actions.message;
-      toast.error(toastMessage);
+      toast.error(actions.message);
     }
+
     setOpen(false);
   }
-
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
