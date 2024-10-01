@@ -26,7 +26,7 @@ export function UserDialog() {
   }
 
   return (
-    <MutableDialog<UserFormData>
+    <MutableDialog<UserFormData, User>
       formSchema={userFormSchema}
       FormComponent={UserForm}
       action={handleAddUser}

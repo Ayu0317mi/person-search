@@ -1,8 +1,8 @@
-//mutable-dialog.tsx
+// app/components/mutable-dialog.tsx
+
 'use client';
 
-import React from 'react';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm, UseFormReturn, FieldValues, DefaultValues } from 'react-hook-form';
 import { Button } from "@/components/ui/button";
 import {
@@ -13,29 +13,30 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 import { toast } from 'sonner';
 import { ZodType } from 'zod';
 
-export interface ActionState <T>{
-    success: boolean;
-    message: string | null;
-    data?: T;
-  }
-interface GenericDialogProps<T extends FieldValues> {
+export interface ActionState<U> {
+  success: boolean;
+  message: string | null;
+  data?: U;
+}
+
+interface GenericDialogProps<T extends FieldValues, U> {
   formSchema: ZodType<T>;
   FormComponent: React.ComponentType<{ form: UseFormReturn<T> }>;
-  action?: (data: T) => Promise<ActionState<T>>;
+  action?: (data: T) => Promise<ActionState<U>>;
   triggerButtonLabel?: string;
   addDialogTitle?: string;
   editDialogTitle?: string;
   dialogDescription?: string;
   submitButtonLabel?: string;
   defaultValues?: DefaultValues<T>; // If present, this will indicate edit mode
-  onSuccess?: (data: T) => void;
+  onSuccess?: (data: U) => void; // onSuccess now accepts type U
 }
 
-export default function MutableDialog<T extends FieldValues>({
+export default function MutableDialog<T extends FieldValues, U>({
   formSchema,
   FormComponent,
   action, 
@@ -45,8 +46,8 @@ export default function MutableDialog<T extends FieldValues>({
   editDialogTitle = 'Edit',
   dialogDescription = defaultValues ? 'Make changes to your item here. Click save when you\'re done.' : 'Fill out the form below to add a new item.',
   submitButtonLabel = defaultValues ? 'Save' : 'Add',
-  onSuccess,
-}: GenericDialogProps<T>) {
+  onSuccess, // Destructure onSuccess prop
+}: GenericDialogProps<T, U>) {
   const [open, setOpen] = useState(false);
 
   const form = useForm<T>({
@@ -57,7 +58,6 @@ export default function MutableDialog<T extends FieldValues>({
         console.log('Validation passed:', result); // Log the result after validation
         return { values: result, errors: {} };
       } catch (err: any) {
-        
         console.log('Validation errors:', err.formErrors?.fieldErrors); // Log the validation errors
         return { values: {}, errors: err.formErrors?.fieldErrors };
       }
@@ -83,21 +83,22 @@ export default function MutableDialog<T extends FieldValues>({
     console.log('actions:', actions);
 
     if (actions.success) {
-      toast.success(actions.message);
-
-      if (onSuccess) {
-        onSuccess(actions.data!);  // Call onSuccess with the returned data
+      const toastMessage = actions.message;
+      toast.success(toastMessage);
+      if (onSuccess && actions.data) { // Call onSuccess with the data
+        onSuccess(actions.data);
       }
     } else {
-      toast.error(actions.message);
+      const toastMessage = actions.message;
+      toast.error(toastMessage);
     }
-
     setOpen(false);
   }
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button >{triggerButtonLabel}</Button>
+        <Button>{triggerButtonLabel}</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>

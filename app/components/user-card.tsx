@@ -5,7 +5,6 @@ import { Badge } from '@/components/ui/badge'
 import { Phone, Mail, MapPin, User } from 'lucide-react'
 import { UserEditDialog } from './user-edit-dialog'
 
-const EditDialog = UserEditDialog
 
 interface User {
   id: string
@@ -17,9 +16,10 @@ interface User {
 
 interface UserCardProps {
   user: User
+  onUpdateUser: (updatedUser: User) => void;
 }
 
-export function UserCard({ user }: UserCardProps) {
+export function UserCard({ user, onUpdateUser }: UserCardProps) {
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader className="flex flex-row items-center gap-4">
@@ -49,9 +49,7 @@ export function UserCard({ user }: UserCardProps) {
             <span>{user.location}</span>
           </div>
         )}
-        <EditDialog user={user} onUpdateUser={function (updatedUser: User): void {
-          throw new Error('Function not implemented.')
-        } } />
+        <UserEditDialog key={user.id} user={user} onSuccess={() => onUpdateUser(user)} />
       </CardContent>
     </Card>
   )
