@@ -1,3 +1,4 @@
+//page.tsx
 import UserSearch from './components/user-search';
 import { TechnicalOverview } from './components/technical-overview';
 import { UserDialog } from './components/user-dialog';
