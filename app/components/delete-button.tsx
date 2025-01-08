@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Trash } from 'lucide-react'
 import { deleteUser } from '@/app/actions/actions'
-import { toast } from "@/hooks/use-toast"
+import { toast } from "../hooks/use-toast"
 
 export default function DeleteButton({ userId }: { userId: string }) {
   const handleDelete = async () => {

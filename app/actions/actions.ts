@@ -31,6 +31,7 @@ export async function addUser(data: Omit<User, 'id'>): Promise<User> {
     const newUser = { ...data, id: newId }
     const validatedUser = userSchema.parse(newUser)
     users.push(validatedUser)
+    console.log(`User with id ${newId} has been added.`)
     return validatedUser
 }
 

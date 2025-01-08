@@ -1,3 +1,4 @@
+//layout.tsx
 import type { Metadata } from "next";
 import { Geist, Azeret_Mono as Geist_Mono } from 'next/font/google';
 import { Toaster } from "@/components/ui/toaster";

@@ -15,7 +15,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { toast } from 'sonner';
+//import { toast } from 'sonner';
+import { toast } from "@/app/hooks/use-toast"; // Import Shadcn toast
 import { ZodType } from 'zod';
 
 export interface ActionState <T>{
@@ -89,10 +90,20 @@ export default function MutableDialog<T extends FieldValues>({
 
     if (actions.success) {
       const toastMessage = actions.message;
-      toast.success(toastMessage);
+      console.log('toastMessage:', toastMessage);
+      toast({
+        title: "Success",
+        description: toastMessage,
+        variant: "default",
+      });
     } else {
       const toastMessage = actions.message;
-      toast.error(toastMessage);
+      console.log('toastMessage:', toastMessage);
+      toast({
+        title: "Error",
+        description: toastMessage || "Failed to create lunch gang",
+        variant: "destructive",
+      });
     }
     setOpen(false);
   }
@@ -121,4 +132,4 @@ export default function MutableDialog<T extends FieldValues>({
       </DialogContent>
     </Dialog>
   );
-}
+} 
