@@ -8,16 +8,17 @@ import { User } from '@/app/actions/schemas';
 export default function UserSearch({ searchParams }: { searchParams: { userId?: string } }) {
   const { userId } = searchParams || {};
 
-  // Fetch the user details when userId changes
   const [userDetails, setUserDetails] = useState<User | null>(null);
 
   useEffect(() => {
     if (userId) {
-      getUserById(userId).then((user) => {
-        setUserDetails(user); 
-      });
+      getUserById(userId).then((user) => setUserDetails(user));
     }
-  }, [userId]); 
+  }, [userId]);
+
+  const handleUserUpdate = (updatedUser: User) => {
+    setUserDetails(updatedUser);
+  };
 
   return (
     <div className="space-y-6">
@@ -39,7 +40,7 @@ export default function UserSearch({ searchParams }: { searchParams: { userId?: 
       />
       {userDetails && (
         <Suspense fallback={<p>Loading user...</p>}>
-          <UserCard key={userDetails.id} user={userDetails} />
+          <UserCard key={userDetails.id} user={userDetails} onUserUpdate={handleUserUpdate} />
         </Suspense>
       )}
     </div>
