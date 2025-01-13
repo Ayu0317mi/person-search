@@ -37,7 +37,7 @@ export default function UserCard({ user, onUserUpdate }: UserCardProps) {
       </CardContent>
       <CardFooter className="flex justify-between items-center">
         <DeleteButton userId={user.id} />
-        <UserEditDialog key={`edit-dialog-${user.id}`} user={user} onUserUpdate={onUserUpdate} />
+        <UserEditDialog key={user.id} user={user} onUserUpdate={onUserUpdate} />
       </CardFooter>
     </Card>
   );

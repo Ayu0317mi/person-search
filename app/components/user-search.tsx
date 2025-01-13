@@ -39,7 +39,7 @@ export default function UserSearch({ searchParams }: { searchParams: { userId?: 
       {userDetails && (
         <Suspense fallback={<p>Loading user...</p>}>
           <UserCard
-            key={`user-card-${userDetails.id}`} // Dynamic key ensures re-render
+            key={userDetails.id}
             user={userDetails}
             onUserUpdate={handleUserUpdate}
           />
