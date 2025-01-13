@@ -47,21 +47,33 @@ export async function deleteUser(id: string): Promise<void> {
 }
 
 export async function updateUser(id: string, data: Partial<Omit<User, 'id'>>): Promise<User> {
-    const index = users.findIndex(user => user.id === id)
+    const index = users.findIndex(user => user.id === id);
     if (index === -1) {
-        throw new Error(`User with id ${id} not found`)
+        throw new Error(`User with id ${id} not found`);
     }
 
-    const existingUser = users[index]
-    const updatedUser = { ...existingUser, ...data }
-    const validatedUser = userSchema.parse(updatedUser) // Ensure the updated data adheres to schema
+    const existingUser = users[index];
 
-    users[index] = validatedUser
-    console.log(`User with id ${id} has been updated.`)
-    revalidatePath('/') // Revalidate the page or component path
+    // Log the default values before updating
+    console.log(`Default values before updating user with id ${id}:`, existingUser);
 
-    return validatedUser
+    // Create the updated user object
+    const updatedUser = { ...existingUser, ...data };
+
+    // Validate the updated user data
+    const validatedUser = userSchema.parse(updatedUser); // Ensure the updated data adheres to schema
+
+    // Update the user in the array
+    users[index] = validatedUser;
+
+    console.log(`User with id ${id} has been updated to:`, validatedUser);
+
+    // Revalidate the page or component path
+    revalidatePath('/');
+
+    return validatedUser;
 }
+
 
 export const getUserById = cache(async (id: string) => {
     const user = users.find(user => user.id === id)

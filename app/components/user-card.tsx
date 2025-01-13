@@ -1,11 +1,10 @@
-// components/user-card.tsx
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { Badge } from '@/components/ui/badge'
-import { Phone, Mail } from 'lucide-react'
-import { User } from '@/app/actions/schemas'
-import DeleteButton from './delete-button'
-import { UserEditDialog } from './user-edit-dialog'
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Phone, Mail } from 'lucide-react';
+import { User } from '@/app/actions/schemas';
+import DeleteButton from './delete-button';
+import UserEditDialog  from './user-edit-dialog';
 
 interface UserCardProps {
   user: User;
@@ -38,9 +37,8 @@ export default function UserCard({ user, onUserUpdate }: UserCardProps) {
       </CardContent>
       <CardFooter className="flex justify-between items-center">
         <DeleteButton userId={user.id} />
-        <UserEditDialog user={user} onUserUpdate={onUserUpdate} />
+        <UserEditDialog key={`edit-dialog-${user.id}`} user={user} onUserUpdate={onUserUpdate} />
       </CardFooter>
     </Card>
   );
 }
-
