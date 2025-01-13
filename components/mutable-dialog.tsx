@@ -19,10 +19,10 @@ import { toast } from "@/app/hooks/use-toast"; // Using shadcn toast hook for no
 import { ZodType } from 'zod';
 
 export interface ActionState <T>{
-    success: boolean;
-    message: string | null;
-    data?: T;
-  }
+  success: boolean;
+  message: string | null;
+  data?: T;
+}
 interface GenericDialogProps<T extends FieldValues> {
   formSchema: ZodType<T>;
   FormComponent: React.ComponentType<{ form: UseFormReturn<T> }>;
@@ -38,7 +38,7 @@ interface GenericDialogProps<T extends FieldValues> {
 export default function MutableDialog<T extends FieldValues>({
   formSchema,
   FormComponent,
-  action, 
+  action,
   defaultValues,
   triggerButtonLabel = defaultValues ? 'Edit' : 'Add',
   addDialogTitle = 'Add',
@@ -57,10 +57,10 @@ export default function MutableDialog<T extends FieldValues>({
         return { values: result, errors: {} };
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-       catch (err: any) {
+      catch (err: any) {
         if (err.formErrors?.fieldErrors) {
           // check if err is instance of ZodError then return the formErrors
-          console.log('Validation errors:',  err.formErrors.fieldErrors); // Log the validation errors
+          console.log('Validation errors:', err.formErrors.fieldErrors); // Log the validation errors
           return { values: {}, errors: err.formErrors.fieldErrors };
         }
         console.error('Unexpected validation error:', err);
@@ -70,12 +70,13 @@ export default function MutableDialog<T extends FieldValues>({
     defaultValues: defaultValues,
   });
 
-  // Reset the form when the dialog is closed
+  // Reset form default values when defaultValues change
   useEffect(() => {
-    if (!open) {
-      form.reset();
+    if (defaultValues) {
+      form.reset(defaultValues);
     }
-  }, [open, form]);
+  }, [defaultValues, form]);
+
 
   async function handleSubmit(data: T) {
     if (!action) {
@@ -83,7 +84,7 @@ export default function MutableDialog<T extends FieldValues>({
     }
 
     console.log('calling submit');
-    const actions = await action(data);  // Call the provided action directly
+    const actions = await action(data); 
 
     console.log('actions:', actions);
 

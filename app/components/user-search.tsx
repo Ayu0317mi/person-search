@@ -1,4 +1,5 @@
 'use client';
+
 import React, { Suspense, useEffect, useState } from 'react';
 import { SearchCommand } from '@/components/search-command';
 import UserCard from './user-card';
@@ -7,24 +8,22 @@ import { User } from '@/app/actions/schemas';
 
 export default function UserSearch({ searchParams }: { searchParams: { userId?: string } }) {
   const { userId } = searchParams || {};
-
-  // Fetch the user details when userId changes
   const [userDetails, setUserDetails] = useState<User | null>(null);
 
   useEffect(() => {
     if (userId) {
-      getUserById(userId).then((user) => {
-        setUserDetails(user); 
-      });
+      getUserById(userId).then(setUserDetails);
     }
-  }, [userId]); 
+  }, [userId]);
+
+  const handleUserUpdate = (updatedUser: User) => {
+    setUserDetails(updatedUser);
+  };
 
   return (
     <div className="space-y-6">
       <SearchCommand<User>
-        onSearch={async (inputValue: string): Promise<User[]> => {
-          return await searchUsers(inputValue);
-        }}
+        onSearch={async (inputValue: string): Promise<User[]> => searchUsers(inputValue)}
         onItemSelect={async (user: User) => {
           if (user.id) {
             setUserDetails(await getUserById(user.id));
@@ -39,7 +38,11 @@ export default function UserSearch({ searchParams }: { searchParams: { userId?: 
       />
       {userDetails && (
         <Suspense fallback={<p>Loading user...</p>}>
-          <UserCard key={userDetails.id} user={userDetails} />
+          <UserCard
+            key={userDetails.id}
+            user={userDetails}
+            onUserUpdate={handleUserUpdate}
+          />
         </Suspense>
       )}
     </div>
