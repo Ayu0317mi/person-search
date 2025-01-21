@@ -6,14 +6,15 @@ import { Phone, Mail } from 'lucide-react'
 import { User } from '@/app/actions/schemas'
 import DeleteButton from './delete-button'
 import { UserEditDialog } from './user-edit-dialog'
+import { useState } from 'react';
 
 interface UserCardProps {
-  user: User
+  user: User;
 }
 
-console.log("UserCard module loaded");
+export default function UserCard({ user: initialUser }: UserCardProps) {
+  const [user, setUser] = useState(initialUser);
 
-export default function UserCard({ user }: UserCardProps) {
   if (!user || !user.name) {
     console.error("UserCard: Invalid user object", user);
     return <p>Error: Invalid user data</p>;
@@ -44,7 +45,7 @@ export default function UserCard({ user }: UserCardProps) {
       </CardContent>
       <CardFooter className="flex justify-between items-center">
         <DeleteButton userId={user.id} />
-        <UserEditDialog user={user} />
+        <UserEditDialog user={user} onUserUpdated={setUser} />
       </CardFooter>
     </Card>
   );

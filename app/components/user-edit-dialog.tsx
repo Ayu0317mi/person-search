@@ -1,3 +1,4 @@
+//user-edit-dialog.tsx
 'use client'
 
 import { updateUser } from '@/app/actions/actions'
@@ -6,25 +7,27 @@ import { UserForm } from './user-form'
 import MutableDialog, { ActionState } from '@/components/mutable-dialog'
 
 interface UserEditDialogProps {
-  user: User
+  user: User;
+  onUserUpdated: (updatedUser: User) => void; // Callback for notifying parent
 }
 
-export function UserEditDialog({ user }: UserEditDialogProps) {
+export function UserEditDialog({ user, onUserUpdated }: UserEditDialogProps) {
   const handleEditUser = async (data: UserFormData): Promise<ActionState<User>> => {
     try {
-      const updatedUser = await updateUser(user.id, data)
+      const updatedUser = await updateUser(user.id, data);
+      onUserUpdated(updatedUser); // Notify parent about the updated user
       return {
         success: true,
         message: `User ${updatedUser.name} updated successfully`,
         data: updatedUser,
-      }
+      };
     } catch (error) {
       return {
         success: false,
         message: 'Failed to update user' + (error instanceof Error ? error.message : String(error)),
-      }
+      };
     }
-  }
+  };
 
   return (
     <MutableDialog<UserFormData>
@@ -41,5 +44,5 @@ export function UserEditDialog({ user }: UserEditDialogProps) {
         phoneNumber: user.phoneNumber,
       }}
     />
-  )
+  );
 }
