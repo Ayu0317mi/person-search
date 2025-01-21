@@ -1,3 +1,4 @@
+//search-input-cmd.tsx
 'use client';
 
 import * as React from 'react';
@@ -7,36 +8,31 @@ import { User } from '../actions/schemas';
 import { useState } from 'react';
 import UserCard from './user-card';
 
-interface SearchInputProps {
-  userDetails: User | null;
-  onUserUpdate: (updatedUser: User | null) => void;
-}
-
-export default function SearchInput({ userDetails, onUserUpdate }: SearchInputProps) {
-  const [, setSelectedUserId] = useState<string | null>(null);
+export default function SearchInput() {
+  const [userDetails, setUserDetails] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const handleSearch = React.useCallback(async (value: string) => {
-    return searchUsers(value);
-  }, []);
-
-  const handleSelect = React.useCallback(async (user: User) => {
-    setSelectedUserId(user.id);
-    setLoading(true);
-
+  const handleSearch = async (value: string) => {
     try {
-      const fetchedUserDetails = await getUserById(user.id);
-      if (fetchedUserDetails) {
-        onUserUpdate(fetchedUserDetails);  // Update the parent with the selected user
-      }
-      console.log('User details fetched on search-input:', user.id);
+      return await searchUsers(value);
     } catch (error) {
-      console.error('Error fetching user details:', error);
-      onUserUpdate(null); 
+      console.error("Error during search:", error);
+      return [];
+    }
+  };
+
+  const handleSelect = async (user: User) => {
+    setLoading(true);
+    try {
+      const details = await getUserById(user.id);
+      setUserDetails(details);
+    } catch (error) {
+      console.error("Error fetching user details:", error);
+      setUserDetails(null);
     } finally {
       setLoading(false);
     }
-  }, [onUserUpdate]);
+  };
 
   return (
     <div className="w-full max-w-md mx-auto">
@@ -48,8 +44,8 @@ export default function SearchInput({ userDetails, onUserUpdate }: SearchInputPr
         placeholder="Search users..."
         noResultsText="No users found."
       />
-      {loading && <p>Loading user...</p>}
-      {userDetails && <UserCard user={userDetails} onUserUpdate={onUserUpdate} />}
+      {loading && <p className="text-muted-foreground text-center mt-4">Loading user details...</p>}
+      {userDetails && <UserCard user={userDetails} onUserUpdate={setUserDetails} />}
     </div>
   );
 }
