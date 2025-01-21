@@ -1,25 +1,17 @@
-// components/user-card.tsx
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { Badge } from '@/components/ui/badge'
-import { Phone, Mail } from 'lucide-react'
-import { User } from '@/app/actions/schemas'
-import DeleteButton from './delete-button'
-import { UserEditDialog } from './user-edit-dialog'
-import { useState } from 'react';
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Phone, Mail } from 'lucide-react';
+import { User } from '@/app/actions/schemas';
+import DeleteButton from './delete-button';
+import UserEditDialog  from './user-edit-dialog';
 
 interface UserCardProps {
   user: User;
+  onUserUpdate: (updatedUser: User) => void;
 }
 
-export default function UserCard({ user: initialUser }: UserCardProps) {
-  const [user, setUser] = useState(initialUser);
-
-  if (!user || !user.name) {
-    console.error("UserCard: Invalid user object", user);
-    return <p>Error: Invalid user data</p>;
-  }
-
+export default function UserCard({ user, onUserUpdate }: UserCardProps) {
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader className="flex flex-row items-center gap-4">
@@ -45,7 +37,7 @@ export default function UserCard({ user: initialUser }: UserCardProps) {
       </CardContent>
       <CardFooter className="flex justify-between items-center">
         <DeleteButton userId={user.id} />
-        <UserEditDialog user={user} onUserUpdated={setUser} />
+        <UserEditDialog key={user.id} user={user} onUserUpdate={onUserUpdate} />
       </CardFooter>
     </Card>
   );

@@ -1,4 +1,3 @@
-//search-input-cmd.tsx
 'use client';
 
 import * as React from 'react';
@@ -8,9 +7,13 @@ import { User } from '../actions/schemas';
 import { useState } from 'react';
 import UserCard from './user-card';
 
-export default function SearchInput() {
-  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
-  const [userDetails, setUserDetails] = useState<User | null>(null);
+interface SearchInputProps {
+  userDetails: User | null;
+  onUserUpdate: (updatedUser: User | null) => void;
+}
+
+export default function SearchInput({ userDetails, onUserUpdate }: SearchInputProps) {
+  const [, setSelectedUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const handleSearch = React.useCallback(async (value: string) => {
@@ -22,15 +25,18 @@ export default function SearchInput() {
     setLoading(true);
 
     try {
-      const userDetails = await getUserById(user.id);
-      setUserDetails(userDetails);
+      const fetchedUserDetails = await getUserById(user.id);
+      if (fetchedUserDetails) {
+        onUserUpdate(fetchedUserDetails);  // Update the parent with the selected user
+      }
+      console.log('User details fetched on search-input:', user.id);
     } catch (error) {
       console.error('Error fetching user details:', error);
-      setUserDetails(null);
+      onUserUpdate(null); 
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [onUserUpdate]);
 
   return (
     <div className="w-full max-w-md mx-auto">
@@ -43,7 +49,7 @@ export default function SearchInput() {
         noResultsText="No users found."
       />
       {loading && <p>Loading user...</p>}
-      {userDetails && <UserCard user={userDetails} />}
+      {userDetails && <UserCard user={userDetails} onUserUpdate={onUserUpdate} />}
     </div>
   );
 }

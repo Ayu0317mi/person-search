@@ -1,48 +1,41 @@
-//user-edit-dialog.tsx
-'use client'
+'use client';
 
-import { updateUser } from '@/app/actions/actions'
-import { userFormSchema, User, UserFormData } from '@/app/actions/schemas'
-import { UserForm } from './user-form'
-import MutableDialog, { ActionState } from '@/components/mutable-dialog'
+import MutableDialog from '@/components/mutable-dialog';
+import { updateUser } from '@/app/actions/actions';
+import { userFormSchema, User, UserFormData } from '@/app/actions/schemas';
+import { UserForm } from './user-form';
 
 interface UserEditDialogProps {
   user: User;
-  onUserUpdated: (updatedUser: User) => void; // Callback for notifying parent
+  onUserUpdate: (updatedUser: User) => void;
 }
 
-export function UserEditDialog({ user, onUserUpdated }: UserEditDialogProps) {
-  const handleEditUser = async (data: UserFormData): Promise<ActionState<User>> => {
-    try {
-      const updatedUser = await updateUser(user.id, data);
-      onUserUpdated(updatedUser); // Notify parent about the updated user
-      return {
-        success: true,
-        message: `User ${updatedUser.name} updated successfully`,
-        data: updatedUser,
-      };
-    } catch (error) {
-      return {
-        success: false,
-        message: 'Failed to update user' + (error instanceof Error ? error.message : String(error)),
-      };
-    }
+export default function UserEditDialog({ user, onUserUpdate }: UserEditDialogProps) {
+  const handleEditUser = async (data: UserFormData) => {
+    const updatedUser = await updateUser(user.id, data);
+    onUserUpdate(updatedUser); // Propagate the updated user back to the parent
+    return {
+      success: true,
+      message: `User ${updatedUser.name} updated successfully.`,
+      data: updatedUser,
+    };
   };
 
   return (
     <MutableDialog<UserFormData>
+      key={`dialog-${user.id}`} // Ensures dialog refreshes for each user
       formSchema={userFormSchema}
-      FormComponent={UserForm}
+      FormComponent={(props) => <UserForm {...props} />}
       action={handleEditUser}
-      triggerButtonLabel="Edit"
-      editDialogTitle={`Edit ${user.name}`}
-      dialogDescription={`Update the details of ${user.name} below.`}
-      submitButtonLabel="Save Changes"
       defaultValues={{
         name: user.name,
         email: user.email,
         phoneNumber: user.phoneNumber,
       }}
+      triggerButtonLabel="Edit"
+      editDialogTitle={`Edit ${user.name}`}
+      dialogDescription={`Update the details of ${user.name} below.`}
+      submitButtonLabel="Save Changes"
     />
   );
 }
